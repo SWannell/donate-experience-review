@@ -6,6 +6,8 @@ Created on Fri Jun 12 12:08:51 2020
 """
 
 import pandas as pd
+import matplotlib.pyplot as plt; plt.style.use('ggplot')
+import matplotlib.ticker as mtick
 import pickle
 
 with open('AmendedData\\dfdict.pickle', 'rb') as handle:
@@ -58,31 +60,15 @@ for platform in payment_types:
             by_month.loc[mth, appeal] = formpct
     cvr_by_platform[platform] = by_month
 
-cvr_by_platform['paypal'].plot(legend=None)
-
-#    print(b, c)
-
-#for k in df_dict.keys():
-#    _ = df_dict[k]
-#    _ = _[['Page', 'Unique Pageviews']]
-#    _.columns = ['page', '!PVs']
-#    _['page'] = _['page'].str.replace('donate.redcross.org.uk/appeal/', '')
-#    _ = _[_['!PVs'] > 3]
-#    _.set_index('page', inplace=True)
-#    df_dict[k] = _
-## Check all the same
-#for k in df_dict.keys():
-#    print(sorted(df_dict[k].index))
-#
-#month_map = ['2020-0{}'.format(i) for i in [1, 2, 3]]
-#appeals_viewed = sorted(df_dict[2].index)
-#appealmonth = pd.MultiIndex.from_product([appeals_viewed, month_map],
-#                                         names=['appeal', 'month'])
-#traffic_by_month = pd.DataFrame(index=appealmonth)
-#traffic_by_month['viewed'] = 0
-#traffic_by_month.to_csv('AmendedData\\traffic_by_month.csv')
-#
-#for (k, mth) in zip(df_dict.keys(), month_map):
-#    _ = df_dict[k]
-#    for appeal in _.index:
-#        traffic_by_month.loc[appeal, mth]['viewed'] = _.loc[appeal]['!PVs']
+fig, axs = plt.subplots(1, 3, sharey=True, figsize=(13, 5))
+for i, platform in enumerate(cvr_by_platform.keys()):
+    platform_data = cvr_by_platform[platform]
+    # Added these bizarre steps to get it to add xticklabels
+    platform_data = platform_data.reset_index()
+    platform_data = platform_data.rename(columns={"index":"month"})
+    platform_data.plot(legend=None, ax=axs[i], marker='o', linestyle='None', xticks=platform_data.index)
+    axs[i].set_xticklabels(months)
+    axs[i].set_title(platform)
+    axs[i].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1))
+plt.suptitle('Form conversion rate by payment type', fontsize=20)
+plt.savefig('Outputs\\CVR_from-form_payment-type.png')
