@@ -37,9 +37,14 @@ for appeal in ['Kindness Starts With You']:
                                     '20-04', '20-05'],
                              columns=[''])
 
+months = sorted(df['month'].unique())
+
+cvr_by_platform = {k: None for k in payment_types}
 
 for platform in payment_types:
-    for appeal in ['Support People In Crisis']:
+#for platform in ['card']:
+    by_month = pd.DataFrame(index=months)
+    for appeal in bigappeal.index:
         _ = df[df['appeal'] == appeal]
         a = _[_['payment'] == platform]
         a.drop('appeal', axis=1, inplace=True)
@@ -48,8 +53,13 @@ for platform in payment_types:
             print(mth, platform)
             first_step = b['users'].max(axis=1).loc[mth]
             ty_step = b['users'].loc[mth, 'Thank you']
-            formpct = 100*ty_step/first_step
-            print('{}/{} = {:.0f}%'.format(ty_step, first_step, formpct))
+            formpct = ty_step/first_step
+            print('{}/{} = {:.0f}%'.format(ty_step, first_step, 100*formpct))
+            by_month.loc[mth, appeal] = formpct
+    cvr_by_platform[platform] = by_month
+
+cvr_by_platform['paypal'].plot(legend=None)
+
 #    print(b, c)
 
 #for k in df_dict.keys():
