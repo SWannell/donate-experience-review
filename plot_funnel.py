@@ -38,15 +38,18 @@ for appeal in ['Kindness Starts With You']:
                              columns=[''])
 
 
-_ = df[df['appeal'] == appeal]
 for platform in payment_types:
-    a = _[_['payment'] == platform]
-    a.drop('appeal', axis=1, inplace=True)
-    b = a.pivot_table(index='month', columns='formpage').sum()
-    first_step = b['users'].max()
-    ty_step = b['users'].loc['Thank you']
-    formpct = 100*ty_step/first_step
-    print('{}: {}/{} = {:.0f}%'.format(platform, ty_step, first_step, formpct))
+    for appeal in ['Support People In Crisis']:
+        _ = df[df['appeal'] == appeal]
+        a = _[_['payment'] == platform]
+        a.drop('appeal', axis=1, inplace=True)
+        b = a.pivot_table(index='month', columns='formpage')
+        for mth in b.index:
+            print(mth, platform)
+            first_step = b['users'].max(axis=1).loc[mth]
+            ty_step = b['users'].loc[mth, 'Thank you']
+            formpct = 100*ty_step/first_step
+            print('{}/{} = {:.0f}%'.format(ty_step, first_step, formpct))
 #    print(b, c)
 
 #for k in df_dict.keys():
