@@ -35,9 +35,9 @@ colors = ["#158aba", "#f1b13b"]
 sns.set_palette(sns.color_palette(colors))
 currfmt = mtick.StrMethodFormatter('£{x:,.0f}')
 
-fig, ax = plt.subplots(1, 1, figsize=(7, 7))
+fig, ax = plt.subplots(1, 1, figsize=(9, 9))
 sns.violinplot(x='value', y='medium', hue='os', split=True, scale='count',
                data=lbl_nonsmall, ax=ax, cut=0)
 ax.xaxis.set_major_formatter(currfmt)
 ax.set_title('Gift values by channel, by device', fontsize=20)
-#plt.savefig('Outputs\\2020_gift_values_by_channel_split.png')
+plt.savefig('Outputs\\Gift_values_by_channel_device.png')
